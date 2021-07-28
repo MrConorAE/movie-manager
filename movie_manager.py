@@ -9,6 +9,16 @@ import easygui as eg
 # Import sqlite3 for databases
 import sqlite3 as sql
 
+# FUNCTIONS
+
+
+def isInteger(value):
+    # Check if value is an integer
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False
 # INITIALISATION
 # Initialise the connection to the database.
 db = sql.connect('movies.db')
