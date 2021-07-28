@@ -30,8 +30,8 @@ c = db.cursor()
 while True:
     mainMenuOptions = {'Search your library': 'search', 'Add a movie': 'add', 'Remove a movie': 'remove',
                        'Update a movie': 'update', 'View your library': 'view', 'Exit': 'exit'}
-    mainMenuChoice = eg.buttonbox('Welcome to Movie Manager!\nPlease choose an option.',
-                                  'Movie Manager - Main Menu', list(mainMenuOptions.keys()))
+    mainMenuChoice = mainMenuOptions[eg.buttonbox('Welcome to Movie Manager!\nPlease choose an option.',
+                                                  'Movie Manager - Main Menu', list(mainMenuOptions.keys()))]
     if mainMenuChoice == 'search':
         # Search for a movie.
         pass
