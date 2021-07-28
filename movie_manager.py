@@ -93,6 +93,9 @@ class Movie:
 db = sql.connect('movies.db')
 # Initialise the cursor.
 c = db.cursor()
+# Create the movies table if it doesn't exist yet
+c.execute("CREATE TABLE IF NOT EXISTS movies (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, year INTEGER NOT NULL, rating TEXT NOT NULL, runtime INTEGER NOT NULL, genre TEXT NOT NULL);")
+db.commit()
 
 # MAIN MENU
 # Create the main menu.
