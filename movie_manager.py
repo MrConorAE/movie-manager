@@ -106,7 +106,35 @@ while True:
         pass
     elif mainMenuChoice == 'add':
         # Add a movie to the database.
-        pass
+        # Create a blank record to hold the new data:
+        # [name, year, rating, runtime, genre]
+        rawNewMovie = ["", 1990, "", 0, ""]
+        while True:
+            rawNewMovie = eg.multenterbox(
+                "Enter the details for the new movie:",
+                "Movie Manager - Add Movie",
+                ["Movie Title:", "Release Year:", "Rating:",
+                    "Length (minutes):", "Genre:"],
+                rawNewMovie)
+            if (rawNewMovie == None):
+                # The user pressed Cancel, so go back to the main menu.
+                break
+            else:
+                # Otherwise, process the data and check for any errors.
+                newMovie = Movie(rawNewMovie)
+                if (newMovie.validate() == True):
+                    # If all checks have passed, then create the record and add it:
+                    c.execute(
+                        "INSERT INTO movies VALUES (?,?,?,?,?)", rawNewMovie)
+                    db.commit()
+                    # Notify the user:
+                    eg.msgbox("Movie added successfully!",
+                              "Movie Manager - Add Movie", "Back to Menu")
+                    break
+                else:
+                    # Checks failed, so notify the user and try again.
+                    continue
+
     elif mainMenuChoice == 'remove':
         # Remove a movie.
         pass
