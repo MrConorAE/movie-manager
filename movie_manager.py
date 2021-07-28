@@ -19,6 +19,75 @@ def isInteger(value):
         return True
     except ValueError:
         return False
+
+# CLASSES
+
+
+class Movie:
+    def __init__(self, data):
+        # Initialise a new movie from a list.
+        self.name = data[0].strip()
+        self.year = data[1].strip()
+        self.rating = data[2].strip()
+        self.runtime = data[3].strip()
+        self.genre = data[4].strip()
+
+    def export(self):
+        # Export the movie data to a list.
+        return [self.name, self.year, self.rating, self.runtime, self.genre]
+
+    def string(self):
+        # Returns a formatted version of the movie data.
+        return f"'{self.name}' ({self.year})  - {self.genre}, {self.runtime} mins, {self.rating}"
+
+    def validate(self):
+        # Validate the movie data. Return false if invalid, true if valid.
+        if (self.name == ""):
+            eg.msgbox(
+                "Error: the movie title must not be blank.",
+                "Movie Manager - Add Movie",
+                "Try Again")
+            return False
+        elif (self.year == ""):
+            eg.msgbox(
+                "Error: the movie year must not be blank.",
+                "Movie Manager - Add Movie",
+                "Try Again")
+            return False
+        elif (isInteger(self.year) == False):
+            eg.msgbox(
+                "Error: the movie year must be an integer.",
+                "Movie Manager - Add Movie",
+                "Try Again")
+            return False
+        elif (self.rating == ""):
+            eg.msgbox(
+                "Error: the movie rating must not be blank.",
+                "Movie Manager - Add Movie",
+                "Try Again")
+            return False
+        elif (self.runtime == ""):
+            eg.msgbox(
+                "Error: the movie runtime must not be blank.",
+                "Movie Manager - Add Movie",
+                "Try Again")
+            return False
+        elif (isInteger(self.runtime) == False):
+            eg.msgbox(
+                "Error: the movie runtime must be an integer.",
+                "Movie Manager - Add Movie",
+                "Try Again")
+            return False
+        elif (self.genre == ""):
+            eg.msgbox(
+                "Error: the movie genre must not be blank.",
+                "Movie Manager - Add Movie",
+                "Try Again")
+            return False
+        else:
+            return True
+
+
 # INITIALISATION
 # Initialise the connection to the database.
 db = sql.connect('movies.db')
