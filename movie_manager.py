@@ -111,8 +111,8 @@ db.commit()
 # MAIN MENU
 # Create the main menu.
 while True:
-    mainMenuOptions = {'Search your library': 'search', 'Add a movie': 'add', 'Remove a movie': 'remove',
-                       'Update a movie': 'update', 'View your library': 'view', 'Exit': 'exit'}
+    mainMenuOptions = {'Search your library': 'search', 'Add a movie to your library': 'add', 'Remove a movie from your library': 'remove',
+                       'Update a movie already in your library': 'update', 'View all the movies in your library': 'view', 'Exit Movie Manager': 'exit'}
     mainMenuChoice = mainMenuOptions[eg.buttonbox('Welcome to Movie Manager!\nPlease choose an option.',
                                                   'Movie Manager - Main Menu', list(mainMenuOptions.keys()))]
     if mainMenuChoice == 'search':
