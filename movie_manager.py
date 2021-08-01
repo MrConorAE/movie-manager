@@ -155,15 +155,23 @@ while True:
                 # Now that we have a constructed query, execute it and display the results.
                 rawResults = c.execute(query).fetchall()
             # STEP 4 - DISPLAY RESULTS
-                # Convert the fetched data (list of tuples) to a list of Movie objects for easier handling.
-                results = []
-                for result in rawResults:
-                    results.append(Movie(result))
-                # Finally, display the list of movies in a textbox.
-                eg.textbox(f"Found {len(rawResults)} movies.\nPress OK to return to the search menu.",
-                           "Movie Manager - Search Library - Results",
-                           # Use a list comprehension to create the formatted output.
-                           [(result.string() + "\n") for result in results])
+                # If there were no results, display a message and return to the search menu.
+                if (len(rawResults) == 0):
+                    eg.msgbox("No results found.\nCheck your search terms and try again.",
+                              "Movie Manager - Search Library",
+                              "Try Again")
+                    continue
+                # Otherwise...
+                else:
+                    # Convert the fetched data (list of tuples) to a list of Movie objects for easier handling.
+                    results = []
+                    for result in rawResults:
+                        results.append(Movie(result))
+                    # Finally, display the list of movies in a textbox.
+                    eg.textbox(f"Found {len(rawResults)} movies.\nPress OK to return to the search menu.",
+                               "Movie Manager - Search Library - Results",
+                               # Use a list comprehension to create the formatted output.
+                               [(result.string() + "\n") for result in results])
     elif mainMenuChoice == 'add':
         # Add a movie to the database.
         # Create a blank record to hold the new data:
