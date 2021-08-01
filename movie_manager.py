@@ -26,11 +26,22 @@ def isInteger(value):
 class Movie:
     def __init__(self, data):
         # Initialise a new movie from a list.
-        self.name = data[0].strip()
-        self.year = data[1].strip()
-        self.rating = data[2].strip()
-        self.runtime = data[3].strip()
-        self.genre = data[4].strip()
+        # If the input data has 6 elements, there is an ID.
+        if (len(data) == 6):
+            self.id = data[0]
+            self.name = data[1].strip()
+            self.year = data[2]
+            self.rating = data[3].strip()
+            self.runtime = data[4]
+            self.genre = data[5].strip()
+        # Otherwise, it does not contain an ID.
+        else:
+            self.id = -1
+            self.name = data[0].strip()
+            self.year = data[1]
+            self.rating = data[2].strip()
+            self.runtime = data[3]
+            self.genre = data[4].strip()
 
     def export(self):
         # Export the movie data to a list.
