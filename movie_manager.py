@@ -157,7 +157,17 @@ while True:
         pass
     elif mainMenuChoice == 'view':
         # View the movies in the database.
-        pass
+        # Get a complete list of all the movies in the database.
+        rawMovies = c.execute("SELECT * FROM movies").fetchall()
+        # Convert the fetched data (list of tuples) to a list of Movie objects for easier handling.
+        movies = []
+        for movie in rawMovies:
+            movies.append(Movie(movie))
+        # Finally, display the list of movies in a textbox.
+        eg.textbox(f"There are {len(rawMovies)} movies stored in the database.\nPress OK to return to the main menu.",
+                   "Movie Manager - View Movies",
+                   # Use a list comprehension to create the formatted output.
+                   [(movie.string() + "\n") for movie in movies])
     elif mainMenuChoice == 'exit':
         # Exit the program.
         if (eg.buttonbox('Are you sure you want to exit?', 'Movie Manager - Exit', ('Yes', 'No'))) == 'Yes':
