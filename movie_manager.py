@@ -139,7 +139,7 @@ while True:
                 if (newMovie.validate() == True):
                     # If all checks have passed, then create the record and add it:
                     c.execute(
-                        "INSERT INTO movies VALUES (?,?,?,?,?)", rawNewMovie)
+                        "INSERT INTO movies VALUES (null,?,?,?,?,?)", rawNewMovie)
                     db.commit()
                     # Notify the user:
                     eg.msgbox("Movie added successfully!",
