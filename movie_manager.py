@@ -21,7 +21,7 @@ def isInteger(value):
         return False
 
 
-def search():
+def search(message, purpose):
     # Search the library and return the results.
     # STEP 1 - GET SEARCH TERMS
     # Present a window with search options.
@@ -29,8 +29,8 @@ def search():
     fields = {'Movie Title:': 'name', 'Release Year:': 'year',
               'Rating:': 'rating', 'Length (minutes):': 'runtime', 'Genre:': 'genre'}
     search = eg.multenterbox(
-        "Enter your search conditions and press OK to search.\n\nName and Genre will be matched at any point. Rating, Year and Length will be matched from the start.\nIf you fill out multiple fields, a movie must match all of them.\nFields are not case-sensitive.",
-        "Movie Manager - Search Library",
+        f"{message}\n\nEnter your search conditions and press OK to search.\n\nName and Genre will be matched at any point. Rating, Year and Length will be matched from the start.\nIf you fill out multiple fields, a movie must match all of them.\nFields are not case-sensitive.",
+        f"Movie Manager - {purpose}",
         list(fields.keys()))
     # If search equals None, the user has cancelled the search.
     if (search == None):
@@ -179,7 +179,7 @@ while True:
     if mainMenuChoice == 'search':
         # Search for a movie.
         while True:
-            results = search()
+            results = search("Search your movie library.", "Search Library")
             # If none, cancel the search.
             if (results == None):
                 break
