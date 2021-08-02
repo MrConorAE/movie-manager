@@ -258,6 +258,8 @@ while True:
         else:
             selection = selectMovie(
                 results, "Select the movie you would like to remove and press OK.", "Remove Movie")
+            if (selection == None):
+                continue
             # Get confirmation from the user.
             if (eg.buttonbox(f"Are you sure you want to remove this movie from your library?\nThis cannot be undone!\n\n{selection.string()}",
                              "Movie Manager - Remove Movie",
