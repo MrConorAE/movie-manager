@@ -124,7 +124,7 @@ while True:
             fields = {'Movie Title:': 'name', 'Release Year:': 'year',
                       'Rating:': 'rating', 'Length (minutes):': 'runtime', 'Genre:': 'genre'}
             search = eg.multenterbox(
-                "Enter your search conditions and press OK to search.\n\nName and Genre will be matched at any point. Rating will be exactly matched. Year and Length will be matched from the start.\nIf you fill out multiple fields, a movie must match all of them.\nFields are not case-sensitive.",
+                "Enter your search conditions and press OK to search.\n\nName and Genre will be matched at any point. Rating, Year and Length will be matched from the start.\nIf you fill out multiple fields, a movie must match all of them.\nFields are not case-sensitive.",
                 "Movie Manager - Search Library",
                 list(fields.keys()))
             # If search equals None, the user has cancelled the search.
@@ -145,16 +145,8 @@ while True:
                         continue
                     else:
                         # Otherwise, concatenate the search term to the query.
-                        # If the field is Rating, make it match exactly.
-                        if (field == "rating"):
-                            if (needsAnd == True):
-                                # If this isn't the first search term, add an 'AND' to the query.
-                                query += f" AND {field}='{data.strip()}'"
-                            else:
-                                query += f" WHERE {field}='{data.strip()}'"
-                                needsAnd = True
-                        # If the field is Year or Length, match from the start only.
-                        if (field == "year" or field == "runtime"):
+                        # If the field is Rating, Year or Length, match from the start only.
+                        if (field == "year" or field == "runtime" or field == "rating"):
                             if (needsAnd == True):
                                 # If this isn't the first search term, add an 'AND' to the query.
                                 query += f" AND {field} LIKE '{data.strip()}%'"
