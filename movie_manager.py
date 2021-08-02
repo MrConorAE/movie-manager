@@ -81,6 +81,21 @@ def search(message, purpose):
                 results.append(Movie(result))
             return results
 
+
+def selectMovie(results, message, purpose):
+    # Allow the user to select a movie from a list of Movie objects, and return the selected movie.
+    # This is more difficult than it sounds, because EasyGUI returns the STRING that was selected, not the object itself.
+    selectionList = [(result.string() + "\n") for result in results]
+    selection = eg.choicebox(f"Found {len(results)} movies.\n{message}",
+                             f"Movie Manager - {purpose}",
+                             selectionList)
+    if (selection == None):
+        return None
+    else:
+        # Get the movie by reverse-searching the list for the index, and getting the Movie object at that index.
+        # Yes, it's a mess, but it works.
+        return results[selectionList.index(selection)]
+
 # CLASSES
 
 
