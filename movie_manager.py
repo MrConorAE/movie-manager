@@ -352,18 +352,22 @@ while True:
                    # Use a list comprehension to create the formatted output.
                    [(movie.string() + "\n") for movie in movies])
     elif mainMenuChoice == 'random':
-        movie = c.execute(
-            "SELECT * FROM movies ORDER BY RANDOM() LIMIT 1").fetchall()
-        if (len(movie) == 0):
-            # There are no movies in the database!
-            eg.msgbox("There are no movies in your library!\nClick 'Add a movie to your library' on the Main Menu to add one.",
-                      "Movie Manager - Random Movie",
-                      "Back to Menu")
-        else:
-            movie = Movie(movie[0])
-            eg.msgbox(f"Your random movie is...\n\n{movie.string()}",
-                      "Movie Manager - Random Movie",
-                      "OK")
+        while True:
+            movie = c.execute(
+                "SELECT * FROM movies ORDER BY RANDOM() LIMIT 1").fetchall()
+            if (len(movie) == 0):
+                # There are no movies in the database!
+                eg.msgbox("There are no movies in your library!\nClick 'Add a movie to your library' on the Main Menu to add one.",
+                          "Movie Manager - Random Movie",
+                          "Back to Menu")
+            else:
+                movie = Movie(movie[0])
+                if (eg.buttonbox(f"Your random movie is...\n\n{movie.string()}",
+                                 "Movie Manager - Random Movie",
+                                 ["Back to Menu", "Pick Again"]) == "Back to Menu"):
+                    break
+                else:
+                    continue
     elif mainMenuChoice == 'exit':
         # Exit the program.
         if (eg.buttonbox("Are you sure you want to exit?\nYou won't lose your movie library.", "Movie Manager - Exit", ("Yes, exit", "No, do not exit"))) == "Yes, exit":
