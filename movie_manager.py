@@ -357,9 +357,11 @@ while True:
         # Allow the user to import or export their library as a .csv or pickle dump.
         mode = eg.buttonbox("What would you like to do?\n\nImport and Add - import movies and add them to the library, leaving existing movies alone\nImport and Replace - import movies and replace the library with the imported set, deleting all the existing movies\nExport - export your entire library", "Movie Manager - Import/Export - Step 1/3",
                             ["Import and Add", "Import and Replace", "Export", "Cancel"])
+        if mode == "Cancel":
+            continue
         filetype = eg.buttonbox("What file format?\n\n.csv - readable by other applications like Excel, but larger\n.mvd - not readable by other applications, but much smaller", "Movie Manager - Import/Export - Step 2/3",
                                 [".csv", ".mvd", "Cancel"])
-        if mode == "Cancel" or filetype == "Cancel":
+        if filetype == "Cancel":
             continue
         # Import and Add: get the movies and append them to the database.
         if mode == "Import and Add":
@@ -368,6 +370,9 @@ while True:
                 try:
                     filename = eg.fileopenbox(
                         "Select a .csv file to import:", "Movie Manager - Import/Export - Step 3/3", "*.csv", [["*.csv", "CSV files"]])
+                    # If the user pressed Cancel, exit
+                    if filename == None:
+                        continue
                     with open(filename, "rt", newline="") as f:
                         reader = csv.reader(f)
                         # Process the CSV data:
@@ -394,6 +399,9 @@ while True:
                 try:
                     filename = eg.fileopenbox(
                         "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                    # If the user pressed Cancel, exit
+                    if filename == None:
+                        continue
                     with open(filename, "rb") as f:
                         loadedMovies = pickle.load(f)
                     # Get confirmation before importing.
@@ -418,6 +426,9 @@ while True:
                 try:
                     filename = eg.fileopenbox(
                         "Select a .csv file to import:", "Movie Manager - Import/Export - Step 3/3", "*.csv", [["*.csv", "CSV files"]])
+                    # If the user pressed Cancel, exit
+                    if filename == None:
+                        continue
                     with open(filename, "rt", newline="") as f:
                         reader = csv.reader(f)
                         # Process the CSV data:
@@ -445,6 +456,9 @@ while True:
                 try:
                     filename = eg.fileopenbox(
                         "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                    # If the user pressed Cancel, exit
+                    if filename == None:
+                        continue
                     with open(filename, "rb") as f:
                         loadedMovies = pickle.load(f)
                     # Get confirmation before importing.
@@ -470,6 +484,9 @@ while True:
                 try:
                     filename = eg.filesavebox(
                         "Select a .csv file to save to:", "Movie Manager - Import/Export - Step 3/3", "*.csv", [["*.csv", "CSV files"]])
+                    # If the user pressed Cancel, exit
+                    if filename == None:
+                        continue
                     loadedMovies = c.execute(
                         "SELECT * FROM movies").fetchall()
                     # Get confirmation before exporting.
@@ -494,6 +511,9 @@ while True:
                 try:
                     filename = eg.filesavebox(
                         "Select a .mvd file to save to:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                    # If the user pressed Cancel, exit
+                    if filename == None:
+                        continue
                     loadedMovies = c.execute("SELECT * FROM movies").fetchall()
                     # Get confirmation before exporting.
                     if (eg.buttonbox(f"Export {len(loadedMovies)} movies to {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, export", "No, do not export"]) == "Yes, export"):
