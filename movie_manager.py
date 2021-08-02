@@ -278,7 +278,65 @@ while True:
                           "Back to Menu")
     elif mainMenuChoice == 'update':
         # Update a movie.
-        pass
+        results = search(
+            "Search your movie library for the movie you want to update, or leave all fields blank to display all.", "Update Movie")
+        # If none, cancel.
+        if (results == None):
+            continue
+        # If there are no results, display a message and return to the search menu.
+        elif (len(results) == 0):
+            eg.msgbox("No movies found.\nCheck your search terms and try again.",
+                      "Movie Manager - Update Movie",
+                      "Try Again")
+            continue
+        # Otherwise, display the returned list of movies in a choicebox for the user to select the correct one.
+        else:
+            oldMovie = selectMovie(
+                results, "Select the movie you would like to update and press OK.", "Update Movie")
+            if (oldMovie == None):
+                continue
+            # Create a new movie object to hold the updated data:
+            newMovie = oldMovie
+            rawNewMovie = newMovie.export()
+            # Get the changes:
+            while True:
+                rawNewMovie = eg.multenterbox(
+                    "Enter the details for the updated movie:",
+                    "Movie Manager - Update Movie",
+                    ["Movie Title:", "Release Year:", "Rating:",
+                        "Length (minutes):", "Genre:"],
+                    rawNewMovie)
+                if (rawNewMovie == None):
+                    # The user pressed Cancel, so go back to the main menu.
+                    break
+                else:
+                    # Otherwise, process the data and check for any errors.
+                    newMovie = Movie(rawNewMovie)
+                    if (newMovie.validate() == True):
+                        # If all checks have passed, then update it:
+                        # Get confirmation from the user.
+                        if (eg.buttonbox(f"Are you sure you want to update this movie?\nThis cannot be undone!\n\nBEFORE:\n{oldMovie.string()}\n\nAFTER:\n{newMovie.string()}",
+                                         "Movie Manager - Update Movie",
+                                         ["Yes, update the movie", "No, do not update the movie"]) == "Yes, update the movie"):
+                            # Update the record:
+                            c.execute(
+                                f"UPDATE movies SET name = ?, year = ?, rating = ?, runtime = ?, genre = ? WHERE id={oldMovie.id};", newMovie.export())
+                            db.commit()
+                            # Notify the user:
+                            eg.msgbox("Movie updated successfully!",
+                                      "Movie Manager - Update Movie",
+                                      "Back to Menu")
+                            break
+                        else:
+                            eg.msgbox("Movie not updated.",
+                                      "Movie Manager - Update Movie",
+                                      "Back to Menu")
+                            break
+                    else:
+                        # Checks failed, so notify the user and try again.
+                        continue
+            if (rawNewMovie == None):
+                continue
     elif mainMenuChoice == 'view':
         # View the movies in the database.
         # Get a complete list of all the movies in the database.
