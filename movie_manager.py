@@ -360,6 +360,7 @@ while True:
                 eg.msgbox("There are no movies in your library!\nClick 'Add a movie to your library' on the Main Menu to add one.",
                           "Movie Manager - Random Movie",
                           "Back to Menu")
+                break
             else:
                 movie = Movie(movie[0])
                 if (eg.buttonbox(f"Your random movie is...\n\n{movie.string()}",
