@@ -125,7 +125,7 @@ class Movie:
 
     def string(self):
         # Returns a formatted version of the movie data.
-        return f"'{self.name}' ({self.year})  - {self.genre}, {self.runtime} mins, {self.rating}"
+        return f"'{self.name}' ({self.year}) - {self.genre}, {self.runtime} mins, {self.rating}"
 
     def validate(self):
         # Validate the movie data. Return false if invalid, true if valid.
@@ -352,7 +352,7 @@ while True:
                    [(movie.string() + "\n") for movie in movies])
     elif mainMenuChoice == 'exit':
         # Exit the program.
-        if (eg.buttonbox('Are you sure you want to exit?', 'Movie Manager - Exit', ('Yes', 'No'))) == 'Yes':
+        if (eg.buttonbox("Are you sure you want to exit?\nYou won't lose your movie library.", "Movie Manager - Exit", ("Yes, exit", "No, do not exit"))) == "Yes, exit":
             quit()
         else:
             pass
