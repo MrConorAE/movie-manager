@@ -243,7 +243,37 @@ while True:
 
     elif mainMenuChoice == 'remove':
         # Remove a movie.
-        pass
+        results = search(
+            "Search your movie library for the movie you want to remove, or leave all fields blank to display all.", "Remove Movie")
+        # If none, cancel.
+        if (results == None):
+            continue
+        # If there are no results, display a message and return to the search menu.
+        elif (len(results) == 0):
+            eg.msgbox("No movies found.\nCheck your search terms and try again.",
+                      "Movie Manager - Remove Movie",
+                      "Try Again")
+            continue
+        # Otherwise, display the returned list of movies in a choicebox for the user to select the correct one.
+        else:
+            selection = selectMovie(
+                results, "Select the movie you would like to remove and press OK.", "Remove Movie")
+            # Get confirmation from the user.
+            if (eg.buttonbox(f"Are you sure you want to remove this movie from your library?\nThis cannot be undone!\n\n{selection.string()}",
+                             "Movie Manager - Remove Movie",
+                             ["Yes, remove the movie", "No, do not remove the movie"]) == "Yes, remove the movie"):
+                # Remove the record:
+                c.execute(f"DELETE FROM movies WHERE id={selection.id}")
+                db.commit()
+                # Notify the user:
+                eg.msgbox("Movie removed successfully!",
+                          "Movie Manager - Remove Movie",
+                          "Back to Menu")
+                continue
+            else:
+                eg.msgbox("Movie not removed.",
+                          "Movie Manager - Remove Movie",
+                          "Back to Menu")
     elif mainMenuChoice == 'update':
         # Update a movie.
         pass
