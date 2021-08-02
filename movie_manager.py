@@ -5,6 +5,7 @@
 
 # IMPORTS
 # Import EasyGUI for GUI
+from tkinter.constants import S
 import easygui as eg
 # Import sqlite3 for databases
 import sqlite3 as sql
@@ -188,7 +189,7 @@ db.commit()
 # Create the main menu.
 while True:
     mainMenuOptions = {'Search your library': 'search', 'Add a movie to your library': 'add', 'Remove a movie from your library': 'remove',
-                       'Update a movie already in your library': 'update', 'View all the movies in your library': 'view', 'Exit Movie Manager': 'exit'}
+                       'Update a movie already in your library': 'update', 'View all the movies in your library': 'view', 'Pick a random movie': 'random', 'Exit Movie Manager': 'exit'}
     mainMenuChoice = mainMenuOptions[eg.buttonbox('Welcome to Movie Manager!\nPlease choose an option.',
                                                   'Movie Manager - Main Menu', list(mainMenuOptions.keys()))]
     if mainMenuChoice == 'search':
@@ -350,6 +351,19 @@ while True:
                    "Movie Manager - View Library",
                    # Use a list comprehension to create the formatted output.
                    [(movie.string() + "\n") for movie in movies])
+    elif mainMenuChoice == 'random':
+        movie = c.execute(
+            "SELECT * FROM movies ORDER BY RANDOM() LIMIT 1").fetchall()
+        if (len(movie) == 0):
+            # There are no movies in the database!
+            eg.msgbox("There are no movies in your library!\nClick 'Add a movie to your library' on the Main Menu to add one.",
+                      "Movie Manager - Random Movie",
+                      "Back to Menu")
+        else:
+            movie = Movie(movie[0])
+            eg.msgbox(f"Your random movie is...\n\n{movie.string()}",
+                      "Movie Manager - Random Movie",
+                      "OK")
     elif mainMenuChoice == 'exit':
         # Exit the program.
         if (eg.buttonbox("Are you sure you want to exit?\nYou won't lose your movie library.", "Movie Manager - Exit", ("Yes, exit", "No, do not exit"))) == "Yes, exit":
