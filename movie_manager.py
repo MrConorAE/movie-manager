@@ -20,6 +20,67 @@ def isInteger(value):
     except ValueError:
         return False
 
+
+def search():
+    # Search the library and return the results.
+    # STEP 1 - GET SEARCH TERMS
+    # Present a window with search options.
+    # The user can search by any field.
+    fields = {'Movie Title:': 'name', 'Release Year:': 'year',
+              'Rating:': 'rating', 'Length (minutes):': 'runtime', 'Genre:': 'genre'}
+    search = eg.multenterbox(
+        "Enter your search conditions and press OK to search.\n\nName and Genre will be matched at any point. Rating, Year and Length will be matched from the start.\nIf you fill out multiple fields, a movie must match all of them.\nFields are not case-sensitive.",
+        "Movie Manager - Search Library",
+        list(fields.keys()))
+    # If search equals None, the user has cancelled the search.
+    if (search == None):
+        return None
+    # If the user has not cancelled the search, perform the search.
+    # STEP 2 - CONSTRUCT A QUERY STRING
+    else:
+        query = "SELECT * from movies "
+        # First, construct the query by concatenating the search terms.
+        # For each field that has been filled, add it to the query:
+        needsAnd = False
+        for index, data in enumerate(search):
+            # Get the field associated with the search term.
+            field = list(fields.values())[index]
+            # If it's blank, skip it.
+            if (data.strip() == ""):
+                continue
+            else:
+                # Otherwise, concatenate the search term to the query.
+                # If the field is Rating, Year or Length, match from the start only.
+                if (field == "year" or field == "runtime" or field == "rating"):
+                    if (needsAnd == True):
+                        # If this isn't the first search term, add an 'AND' to the query.
+                        query += f" AND {field} LIKE '{data.strip()}%'"
+                    else:
+                        query += f" WHERE {field} LIKE '{data.strip()}%'"
+                        needsAnd = True
+                else:
+                    # Otherwise, match anywhere.
+                    if (needsAnd == True):
+                        # If this isn't the first search term, add an 'AND' to the query.
+                        query += f" AND {field} LIKE '%{data.strip()}%'"
+                    else:
+                        query += f" WHERE {field} LIKE '%{data.strip()}%'"
+                        needsAnd = True
+    # STEP 3 - PERFORM SEARCH
+        # Now that we have a constructed query, execute it and display the results.
+        rawResults = c.execute(query).fetchall()
+    # STEP 4 - DISPLAY RESULTS
+        # If there were no results, display a message and return to the search menu.
+        if (len(rawResults) == 0):
+            return []
+        # Otherwise...
+        else:
+            # Convert the fetched data (list of tuples) to a list of Movie objects for easier handling.
+            results = []
+            for result in rawResults:
+                results.append(Movie(result))
+            return results
+
 # CLASSES
 
 
@@ -118,70 +179,22 @@ while True:
     if mainMenuChoice == 'search':
         # Search for a movie.
         while True:
-            # STEP 1 - GET SEARCH TERMS
-            # Present a window with search options.
-            # The user can search by any field.
-            fields = {'Movie Title:': 'name', 'Release Year:': 'year',
-                      'Rating:': 'rating', 'Length (minutes):': 'runtime', 'Genre:': 'genre'}
-            search = eg.multenterbox(
-                "Enter your search conditions and press OK to search.\n\nName and Genre will be matched at any point. Rating, Year and Length will be matched from the start.\nIf you fill out multiple fields, a movie must match all of them.\nFields are not case-sensitive.",
-                "Movie Manager - Search Library",
-                list(fields.keys()))
-            # If search equals None, the user has cancelled the search.
-            if (search == None):
+            results = search()
+            # If none, cancel the search.
+            if (results == None):
                 break
-            # If the user has not cancelled the search, perform the search.
-            # STEP 2 - CONSTRUCT A QUERY STRING
+            # If there are no results, display a message and return to the search menu.
+            if (len(results) == 0):
+                eg.msgbox("No results found.\nCheck your search terms and try again.",
+                          "Movie Manager - Search Library",
+                          "Try Again")
+                continue
+            # Otherwise, display the returned list of movies in a textbox.
             else:
-                query = "SELECT * from movies "
-                # First, construct the query by concatenating the search terms.
-                # For each field that has been filled, add it to the query:
-                needsAnd = False
-                for index, data in enumerate(search):
-                    # Get the field associated with the search term.
-                    field = list(fields.values())[index]
-                    # If it's blank, skip it.
-                    if (data.strip() == ""):
-                        continue
-                    else:
-                        # Otherwise, concatenate the search term to the query.
-                        # If the field is Rating, Year or Length, match from the start only.
-                        if (field == "year" or field == "runtime" or field == "rating"):
-                            if (needsAnd == True):
-                                # If this isn't the first search term, add an 'AND' to the query.
-                                query += f" AND {field} LIKE '{data.strip()}%'"
-                            else:
-                                query += f" WHERE {field} LIKE '{data.strip()}%'"
-                                needsAnd = True
-                        else:
-                            # Otherwise, match anywhere.
-                            if (needsAnd == True):
-                                # If this isn't the first search term, add an 'AND' to the query.
-                                query += f" AND {field} LIKE '%{data.strip()}%'"
-                            else:
-                                query += f" WHERE {field} LIKE '%{data.strip()}%'"
-                                needsAnd = True
-            # STEP 3 - PERFORM SEARCH
-                # Now that we have a constructed query, execute it and display the results.
-                rawResults = c.execute(query).fetchall()
-            # STEP 4 - DISPLAY RESULTS
-                # If there were no results, display a message and return to the search menu.
-                if (len(rawResults) == 0):
-                    eg.msgbox("No results found.\nCheck your search terms and try again.",
-                              "Movie Manager - Search Library",
-                              "Try Again")
-                    continue
-                # Otherwise...
-                else:
-                    # Convert the fetched data (list of tuples) to a list of Movie objects for easier handling.
-                    results = []
-                    for result in rawResults:
-                        results.append(Movie(result))
-                    # Finally, display the list of movies in a textbox.
-                    eg.textbox(f"Found {len(rawResults)} movies.\nPress OK to return to the search menu.",
-                               "Movie Manager - Search Library - Results",
-                               # Use a list comprehension to create the formatted output.
-                               [(result.string() + "\n") for result in results])
+                eg.textbox(f"Found {len(results)} movies.\nPress OK to return to the search menu.",
+                           "Movie Manager - Search Library - Results",
+                           # Use a list comprehension to create the formatted output.
+                           [(result.string() + "\n") for result in results])
     elif mainMenuChoice == 'add':
         # Add a movie to the database.
         # Create a blank record to hold the new data:
