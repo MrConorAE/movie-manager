@@ -2,6 +2,7 @@
 # By Conor Eager
 # Developed for Computer Science NCEA Level 2 - AS91892 & AS91897
 # © (copyright) Conor Eager, 2021. All rights reserved.
+# Up-to-date versions available for download at https://github.com/mrconorae/movie-manager
 
 # IMPORTS
 # Import EasyGUI for GUI
