@@ -5,10 +5,13 @@
 
 # IMPORTS
 # Import EasyGUI for GUI
-from tkinter.constants import S
 import easygui as eg
 # Import sqlite3 for databases
 import sqlite3 as sql
+# Import pickle for exporting and importing compressed dumps
+import pickle
+# Import csv for reading and writing CSV files
+import csv
 
 # FUNCTIONS
 
@@ -189,7 +192,7 @@ db.commit()
 # Create the main menu.
 while True:
     mainMenuOptions = {'Search your library': 'search', 'Add a movie to your library': 'add', 'Remove a movie from your library': 'remove',
-                       'Update a movie already in your library': 'update', 'View all the movies in your library': 'view', 'Pick a random movie': 'random', 'Exit Movie Manager': 'exit'}
+                       'Update a movie already in your library': 'update', 'View all the movies in your library': 'view', 'Import/Export your library': 'importexport', 'Pick a random movie': 'random', 'Exit Movie Manager': 'exit'}
     mainMenuChoice = mainMenuOptions[eg.buttonbox('Welcome to Movie Manager!\nPlease choose an option.',
                                                   'Movie Manager - Main Menu', list(mainMenuOptions.keys()))]
     if mainMenuChoice == 'search':
@@ -241,7 +244,6 @@ while True:
                 else:
                     # Checks failed, so notify the user and try again.
                     continue
-
     elif mainMenuChoice == 'remove':
         # Remove a movie.
         results = search(
@@ -351,7 +353,164 @@ while True:
                    "Movie Manager - View Library",
                    # Use a list comprehension to create the formatted output.
                    [(movie.string() + "\n") for movie in movies])
+    elif mainMenuChoice == 'importexport':
+        # Allow the user to import or export their library as a .csv or pickle dump.
+        mode = eg.buttonbox("What would you like to do?\n\nImport and Add - import movies and add them to the library, leaving existing movies alone\nImport and Replace - import movies and replace the library with the imported set, deleting all the existing movies\nExport - export your entire library", "Movie Manager - Import/Export - Step 1/3",
+                            ["Import and Add", "Import and Replace", "Export", "Cancel"])
+        filetype = eg.buttonbox("What file format?\n\n.csv - readable by other applications like Excel, but larger\n.mvd - not readable by other applications, but much smaller", "Movie Manager - Import/Export - Step 2/3",
+                                [".csv", ".mvd", "Cancel"])
+        if mode == "Cancel" or filetype == "Cancel":
+            continue
+        # Import and Add: get the movies and append them to the database.
+        if mode == "Import and Add":
+            # Open a file picker for the user to select a file to import.
+            if (filetype == ".csv"):
+                try:
+                    filename = eg.fileopenbox(
+                        "Select a .csv file to import:", "Movie Manager - Import/Export - Step 3/3", "*.csv", [["*.csv", "CSV files"]])
+                    with open(filename, "rt", newline="") as f:
+                        reader = csv.reader(f)
+                        # Process the CSV data:
+                        loadedMovies = []
+                        for row in reader:
+                            loadedMovies.append(
+                                Movie(row))
+                    # Get confirmation before importing.
+                    if (eg.buttonbox(f"Import {len(loadedMovies)} movies from {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, import", "No, do not import"]) == "Yes, import"):
+                        # If they agree, import the movies.
+                        c.executemany(
+                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
+                        db.commit()
+                        # Notify the user:
+                        eg.msgbox("Movies imported successfully!",
+                                  "Movie Manager - Import/Export - Complete",
+                                  "Back to Menu")
+                        continue
+                except Exception as e:
+                    eg.msgbox(f"Error: could not import. Check that this is a valid .csv file, and that you have permissions to read the file.\n\n{e}",
+                              "Movie Manager - Import/Export - Error", "Back to Menu")
+                    continue
+            elif (filetype == ".mvd"):
+                try:
+                    filename = eg.fileopenbox(
+                        "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                    with open(filename, "rb") as f:
+                        loadedMovies = pickle.load(f)
+                    # Get confirmation before importing.
+                    if (eg.buttonbox(f"Import {len(loadedMovies)} movies from {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, import", "No, do not import"]) == "Yes, import"):
+                        # If they agree, import the movies.
+                        c.executemany(
+                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
+                        db.commit()
+                        # Notify the user:
+                        eg.msgbox("Movies imported successfully!",
+                                  "Movie Manager - Import/Export - Complete",
+                                  "Back to Menu")
+                        continue
+                except Exception as e:
+                    eg.msgbox(f"Error: could not import. Check that this is a valid .mvd file, and that you have permissions to read the file.\n\n{e}",
+                              "Movie Manager - Import/Export - Error", "Back to Menu")
+                    continue
+        # Import and Replace: get the movies and replace the database with the imported set.
+        elif mode == "Import and Replace":
+            # Open a file picker for the user to select a file to import.
+            if (filetype == ".csv"):
+                try:
+                    filename = eg.fileopenbox(
+                        "Select a .csv file to import:", "Movie Manager - Import/Export - Step 3/3", "*.csv", [["*.csv", "CSV files"]])
+                    with open(filename, "rt", newline="") as f:
+                        reader = csv.reader(f)
+                        # Process the CSV data:
+                        loadedMovies = []
+                        for row in reader:
+                            loadedMovies.append(
+                                Movie(row))
+                    # Get confirmation before importing.
+                    if (eg.buttonbox(f"Replace current library with {len(loadedMovies)} movies from {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, replace", "No, do not replace"]) == "Yes, replace"):
+                        # If they agree, import the movies.
+                        c.execute("DELETE FROM movies")
+                        c.executemany(
+                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
+                        db.commit()
+                        # Notify the user:
+                        eg.msgbox("Movies imported successfully!",
+                                  "Movie Manager - Import/Export - Complete",
+                                  "Back to Menu")
+                        continue
+                except Exception as e:
+                    eg.msgbox(f"Error: could not import. Check that this is a valid .csv file, and that you have permissions to read the file.\n\n{e}",
+                              "Movie Manager - Import/Export - Error", "Back to Menu")
+                    continue
+            elif (filetype == ".mvd"):
+                try:
+                    filename = eg.fileopenbox(
+                        "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                    with open(filename, "rb") as f:
+                        loadedMovies = pickle.load(f)
+                    # Get confirmation before importing.
+                    if (eg.buttonbox(f"Replace current library with {len(loadedMovies)} movies from {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, replace", "No, do not replace"]) == "Yes, replace"):
+                        # If they agree, import the movies.
+                        c.execute("DELETE FROM movies")
+                        c.executemany(
+                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
+                        db.commit()
+                        # Notify the user:
+                        eg.msgbox("Movies imported successfully!",
+                                  "Movie Manager - Import/Export - Complete",
+                                  "Back to Menu")
+                        continue
+                except Exception as e:
+                    eg.msgbox(f"Error: could not import. Check that this is a valid .mvd file, and that you have permissions to read the file.\n\n{e}",
+                              "Movie Manager - Import/Export - Error", "Back to Menu")
+                    continue
+        # Export: get the movies and export them to a file.
+        elif mode == "Export":
+            # Open a file picker for the user to select a file to export.
+            if (filetype == ".csv"):
+                try:
+                    filename = eg.filesavebox(
+                        "Select a .csv file to save to:", "Movie Manager - Import/Export - Step 3/3", "*.csv", [["*.csv", "CSV files"]])
+                    loadedMovies = c.execute(
+                        "SELECT * FROM movies").fetchall()
+                    # Get confirmation before exporting.
+                    if (eg.buttonbox(f"Export {len(loadedMovies)} movies to {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, export", "No, do not export"]) == "Yes, export"):
+                        # If they agree, export the movies.
+                        with open(filename, "wt", newline="") as f:
+                            writer = csv.writer(f)
+                            # Process the CSV data:
+                            # Exclude the ID, because it'll cause problems when importing:
+                            for movie in loadedMovies:
+                                writer.writerow(movie[1:])
+                        # Notify the user:
+                        eg.msgbox("Movies exported successfully!",
+                                  "Movie Manager - Import/Export - Complete",
+                                  "Back to Menu")
+                        continue
+                except Exception as e:
+                    eg.msgbox(f"Error: could not export. Check that you have permissions to write the file.\n\n{e}",
+                              "Movie Manager - Import/Export - Error", "Back to Menu")
+                    continue
+            elif (filetype == ".mvd"):
+                try:
+                    filename = eg.filesavebox(
+                        "Select a .mvd file to save to:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                    loadedMovies = c.execute("SELECT * FROM movies").fetchall()
+                    # Get confirmation before exporting.
+                    if (eg.buttonbox(f"Export {len(loadedMovies)} movies to {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, export", "No, do not export"]) == "Yes, export"):
+                        # If they agree, export the movies.
+                        with open(filename, "wb") as f:
+                            pickle.dump(loadedMovies, f)
+                        # Notify the user:
+                        eg.msgbox("Movies exported successfully!",
+                                  "Movie Manager - Import/Export - Complete",
+                                  "Back to Menu")
+                        continue
+                except Exception as e:
+                    eg.msgbox(f"Error: could not import. Check that this is a valid .mvd file, and that you have permissions to read the file.\n\n{e}",
+                              "Movie Manager - Import/Export - Error", "Back to Menu")
+                    continue
     elif mainMenuChoice == 'random':
+        # Choose a random movie from the library.
         while True:
             movie = c.execute(
                 "SELECT * FROM movies ORDER BY RANDOM() LIMIT 1").fetchall()
