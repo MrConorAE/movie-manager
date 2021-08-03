@@ -18,7 +18,14 @@ import csv
 
 
 def isInteger(value):
-    # Check if value is an integer
+    """Check if the passed value is an integer.
+
+    Args:
+        value (Any): The value to test.
+
+    Returns:
+        Literal[True, False]: True if the value is an integer, False if it isn't.
+    """
     try:
         int(value)
         return True
@@ -27,7 +34,15 @@ def isInteger(value):
 
 
 def search(message, purpose):
-    # Search the library and return the results.
+    """Open a window where the user can input search terms to search the database, and return the results in Movie format.
+
+    Args:
+        message (String): A message to display to the user, explaining what they are searching for.
+        purpose (String): A string to identify the purpose of the search ("Remove Movie" or "Search Library").
+
+    Returns:
+        List[Movie]: A list of Movie objects representing the results, an empty array if there were no results or None if the search was cancelled.
+    """
     # STEP 1 - GET SEARCH TERMS
     # Present a window with search options.
     # The user can search by any field.
@@ -88,6 +103,16 @@ def search(message, purpose):
 
 
 def selectMovie(results, message, purpose):
+    """Allow the user to select a movie from a list of Movie objects (e.g. from a search).
+
+    Args:
+        results (List[Movie]): The list of options, as Movie objects.
+        message (String): A message explaining to the user what they are selecting.
+        purpose (String): A string to identify the purpose of the search ("Remove Movie" or "Search Library").
+
+    Returns:
+        Movie: The movie that was selected.
+    """
     # Allow the user to select a movie from a list of Movie objects, and return the selected movie.
     # This is more difficult than it sounds, because EasyGUI returns the STRING that was selected, not the object itself.
     selectionList = [(result.string() + "\n") for result in results]
@@ -105,8 +130,16 @@ def selectMovie(results, message, purpose):
 
 
 class Movie:
+    """This class represents a movie.
+    """
+
     def __init__(self, data):
-        # Initialise a new movie from a list.
+        """Create a new Movie object.
+
+        Args:
+            data (List): The required data to create a new Movie object.
+            Format: [?]ID (optional), [0]Name, [1]Year, [2]Rating, [3]Runtime, [4]Genre
+        """
         # If the input data has 6 elements, there is an ID.
         if (len(data) == 6):
             self.id = data[0]
@@ -125,15 +158,27 @@ class Movie:
             self.genre = data[4].strip()
 
     def export(self):
-        # Export the movie data to a list.
+        """Export the movie as a list of values. The opposite of __init__().
+
+        Returns:
+            List: The movie data.
+        """
         return [self.name, self.year, self.rating, self.runtime, self.genre]
 
     def string(self):
-        # Returns a formatted version of the movie data.
+        """Returns a formatted string representing the movie. Used for displaying the movie to the user.
+
+        Returns:
+            String: The movie data, formatted as a string.
+        """
         return f"'{self.name}' ({self.year}) - {self.genre}, {self.runtime} mins, {self.rating}"
 
     def validate(self):
-        # Validate the movie data. Return false if invalid, true if valid.
+        """Validate the movie data (check that all fields are filled and valid format).
+
+        Returns:
+            Literal[True, False]: True if checks passed, False otherwise.
+        """
         if (self.name == ""):
             eg.msgbox(
                 "Error: the movie title must not be blank.",
