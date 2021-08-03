@@ -444,7 +444,7 @@ while True:
             elif (filetype == ".mvd"):
                 try:
                     filename = eg.fileopenbox(
-                        "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                        "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "MVD files"]])
                     # If the user pressed Cancel, exit
                     if filename == None:
                         continue
@@ -501,7 +501,7 @@ while True:
             elif (filetype == ".mvd"):
                 try:
                     filename = eg.fileopenbox(
-                        "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                        "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "MVD files"]])
                     # If the user pressed Cancel, exit
                     if filename == None:
                         continue
@@ -556,7 +556,7 @@ while True:
             elif (filetype == ".mvd"):
                 try:
                     filename = eg.filesavebox(
-                        "Select a .mvd file to save to:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "Movie database dumps"]])
+                        "Select a .mvd file to save to:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "MVD files"]])
                     # If the user pressed Cancel, exit
                     if filename == None:
                         continue
@@ -572,7 +572,7 @@ while True:
                                   "Back to Menu")
                         continue
                 except Exception as e:
-                    eg.msgbox(f"Error: could not import. Check that this is a valid .mvd file, and that you have permissions to read the file.\n\n{e}",
+                    eg.msgbox(f"Error: could not export. Check that this is a valid .mvd file, and that you have permissions to read the file.\n\n{e}",
                               "Movie Manager - Import/Export - Error", "Back to Menu")
                     continue
     elif mainMenuChoice == 'random':
