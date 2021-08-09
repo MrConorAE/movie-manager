@@ -409,64 +409,8 @@ while True:
                                 [".csv", ".mvd", "Cancel"])
         if filetype == "Cancel":
             continue
-        # Import and Add: get the movies and append them to the database.
-        if mode == "Import and Add":
-            # Open a file picker for the user to select a file to import.
-            if (filetype == ".csv"):
-                try:
-                    filename = eg.fileopenbox(
-                        "Select a .csv file to import:", "Movie Manager - Import/Export - Step 3/3", "*.csv", [["*.csv", "CSV files"]])
-                    # If the user pressed Cancel, exit
-                    if filename == None:
-                        continue
-                    with open(filename, "rt", newline="") as f:
-                        reader = csv.reader(f)
-                        # Process the CSV data:
-                        loadedMovies = []
-                        for row in reader:
-                            loadedMovies.append(
-                                Movie(row))
-                    # Get confirmation before importing.
-                    if (eg.buttonbox(f"Import {len(loadedMovies)} movies from {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, import", "No, do not import"]) == "Yes, import"):
-                        # If they agree, import the movies.
-                        c.executemany(
-                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
-                        db.commit()
-                        # Notify the user:
-                        eg.msgbox("Movies imported successfully!",
-                                  "Movie Manager - Import/Export - Complete",
-                                  "Back to Menu")
-                        continue
-                except Exception as e:
-                    eg.msgbox(f"Error: could not import. Check that this is a valid .csv file, and that you have permissions to read the file.\n\n{e}",
-                              "Movie Manager - Import/Export - Error", "Back to Menu")
-                    continue
-            elif (filetype == ".mvd"):
-                try:
-                    filename = eg.fileopenbox(
-                        "Select a .mvd file to import:", "Movie Manager - Import/Export - Step 3/3", "*.mvd", [["*.mvd", "MVD files"]])
-                    # If the user pressed Cancel, exit
-                    if filename == None:
-                        continue
-                    with open(filename, "rb") as f:
-                        loadedMovies = pickle.load(f)
-                    # Get confirmation before importing.
-                    if (eg.buttonbox(f"Import {len(loadedMovies)} movies from {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, import", "No, do not import"]) == "Yes, import"):
-                        # If they agree, import the movies.
-                        c.executemany(
-                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
-                        db.commit()
-                        # Notify the user:
-                        eg.msgbox("Movies imported successfully!",
-                                  "Movie Manager - Import/Export - Complete",
-                                  "Back to Menu")
-                        continue
-                except Exception as e:
-                    eg.msgbox(f"Error: could not import. Check that this is a valid .mvd file, and that you have permissions to read the file.\n\n{e}",
-                              "Movie Manager - Import/Export - Error", "Back to Menu")
-                    continue
-        # Import and Replace: get the movies and replace the database with the imported set.
-        elif mode == "Import and Replace":
+        # Import and Add and Import and Replace: get the movies and append them to the database.
+        if mode == "Import and Add" or mode == "Import and Replace":
             # Open a file picker for the user to select a file to import.
             if (filetype == ".csv"):
                 try:
@@ -485,7 +429,8 @@ while True:
                     # Get confirmation before importing.
                     if (eg.buttonbox(f"Replace current library with {len(loadedMovies)} movies from {filename}?", "Movie Manager - Import/Export - Confirmation", ["Yes, replace", "No, do not replace"]) == "Yes, replace"):
                         # If they agree, import the movies.
-                        c.execute("DELETE FROM movies")
+                        if mode == "Import and Replace":
+                            c.execute("DELETE FROM movies")
                         c.executemany(
                             "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
                         db.commit()
