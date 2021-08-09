@@ -541,7 +541,4 @@ while True:
                     continue
     elif mainMenuChoice == 'exit':
         # Exit the program.
-        if (eg.buttonbox("Are you sure you want to exit?\nYou won't lose your movie library.", "Movie Manager - Exit", ("Yes, exit", "No, do not exit"))) == "Yes, exit":
-            quit()
-        else:
-            pass
+        quit()
