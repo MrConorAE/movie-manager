@@ -179,50 +179,31 @@ class Movie:
         Returns:
             Literal[True, False]: True if checks passed, False otherwise.
         """
+        errors = ""
         if (self.name == ""):
-            eg.msgbox(
-                "Error: the movie title must not be blank.",
-                "Movie Manager - Add Movie",
-                "Try Again")
-            return False
-        elif (self.year == ""):
-            eg.msgbox(
-                "Error: the movie year must not be blank.",
-                "Movie Manager - Add Movie",
-                "Try Again")
-            return False
-        elif (isInteger(self.year) == False):
-            eg.msgbox(
-                "Error: the movie year must be an integer.",
-                "Movie Manager - Add Movie",
-                "Try Again")
-            return False
-        elif (self.rating == ""):
-            eg.msgbox(
-                "Error: the movie rating must not be blank.",
-                "Movie Manager - Add Movie",
-                "Try Again")
-            return False
-        elif (self.runtime == ""):
-            eg.msgbox(
-                "Error: the movie runtime must not be blank.",
-                "Movie Manager - Add Movie",
-                "Try Again")
-            return False
-        elif (isInteger(self.runtime) == False):
-            eg.msgbox(
-                "Error: the movie runtime must be an integer.",
-                "Movie Manager - Add Movie",
-                "Try Again")
-            return False
-        elif (self.genre == ""):
-            eg.msgbox(
-                "Error: the movie genre must not be blank.",
-                "Movie Manager - Add Movie",
-                "Try Again")
-            return False
-        else:
+            errors += "- The movie title must not be blank.\n"
+        if (self.year == ""):
+            errors += "- The movie year must not be blank.\n"
+        if (isInteger(self.year) == False):
+            errors += "- The movie year must be an integer.\n"
+        if (self.rating == ""):
+            errors += "- The movie rating must not be blank.\n"
+        if (self.runtime == ""):
+            errors += "- The movie runtime must not be blank.\n"
+        if (isInteger(self.runtime) == False):
+            errors += "- The movie runtime must be an integer.\n"
+        if (self.genre == ""):
+            errors += "- The movie genre must not be blank.\n"
+
+        # Now show the user the errors (if any) and return whether or not the data is valid.
+        if (errors == ""):
             return True
+        else:
+            eg.msgbox(
+                f"The movie is invalid and cannot be added. Please fix the following errors:\n\n{errors}",
+                "Movie Manager - Add Movie",
+                "Try Again")
+            return False
 
 
 # INITIALISATION
