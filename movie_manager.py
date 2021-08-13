@@ -115,7 +115,7 @@ def selectMovie(results, message, purpose):
     """
     # Allow the user to select a movie from a list of Movie objects, and return the selected movie.
     # This is more difficult than it sounds, because EasyGUI returns the STRING that was selected, not the object itself.
-    selectionList = [(result.string() + "\n") for result in results]
+    selectionList = [(result.string(True) + "\n") for result in results]
     selection = eg.choicebox(f"Found {len(results)} movies.\n{message}",
                              f"Movie Manager - {purpose}",
                              selectionList)
@@ -165,13 +165,16 @@ class Movie:
         """
         return [self.name, self.year, self.rating, self.runtime, self.genre]
 
-    def string(self):
+    def string(self, table):
         """Returns a formatted string representing the movie. Used for displaying the movie to the user.
 
         Returns:
             String: The movie data, formatted as a string.
         """
-        return f"'{self.name}' ({self.year}) - {self.genre}, {self.runtime} mins, {self.rating}"
+        if (table == True):
+            return f"{self.name:<40}  {self.year:<4}  {self.genre:<25}  {self.runtime:>8} mins   {self.rating}"
+        else:
+            return f"'{self.name}' ({self.year}) - {self.genre}, {self.runtime} mins, {self.rating}"
 
     def validate(self):
         """Validate the movie data (check that all fields are filled and valid format).
@@ -237,10 +240,10 @@ while True:
                 continue
             # Otherwise, display the returned list of movies in a textbox.
             else:
-                eg.textbox(f"Found {len(results)} movies.\nPress OK to return to the search menu.",
+                eg.codebox(f"Found {len(results)} movies.\nPress OK to return to the search menu.",
                            "Movie Manager - Search Library - Results",
                            # Use a list comprehension to create the formatted output.
-                           [(result.string() + "\n") for result in results])
+                           [(result.string(True) + "\n") for result in results])
     elif mainMenuChoice == 'add':
         # Add a movie to the database.
         # Create a blank record to hold the new data:
@@ -291,7 +294,7 @@ while True:
             if (selection == None):
                 continue
             # Get confirmation from the user.
-            if (eg.buttonbox(f"Are you sure you want to remove this movie from your library?\nThis cannot be undone!\n\n{selection.string()}",
+            if (eg.buttonbox(f"Are you sure you want to remove this movie from your library?\nThis cannot be undone!\n\n{selection.string(False)}",
                              "Movie Manager - Remove Movie",
                              ["Yes, remove the movie", "No, do not remove the movie"]) == "Yes, remove the movie"):
                 # Remove the record:
@@ -345,7 +348,7 @@ while True:
                     if (newMovie.validate() == True):
                         # If all checks have passed, then update it:
                         # Get confirmation from the user.
-                        if (eg.buttonbox(f"Are you sure you want to update this movie?\nThis cannot be undone!\n\nBEFORE:\n{oldMovie.string()}\n\nAFTER:\n{newMovie.string()}",
+                        if (eg.buttonbox(f"Are you sure you want to update this movie?\nThis cannot be undone!\n\nBEFORE:\n{oldMovie.string(False)}\n\nAFTER:\n{newMovie.string(False)}",
                                          "Movie Manager - Update Movie",
                                          ["Yes, update the movie", "No, do not update the movie"]) == "Yes, update the movie"):
                             # Update the record:
@@ -386,10 +389,10 @@ while True:
         for movie in rawMovies:
             movies.append(Movie(movie))
         # Finally, display the list of movies in a textbox.
-        eg.textbox(f"There are {len(rawMovies)} movies stored in the database.\nPress OK to return to the main menu.",
+        eg.codebox(f"There are {len(rawMovies)} movies stored in the database.\nPress OK to return to the main menu.",
                    "Movie Manager - View Library",
                    # Use a list comprehension to create the formatted output.
-                   [(movie.string() + "\n") for movie in movies])
+                   [(movie.string(True) + "\n") for movie in movies])
     elif mainMenuChoice == 'importexport':
         # Allow the user to import or export their library as a .csv or pickle dump.
         mode = eg.buttonbox("What would you like to do?\n\nImport and Add - import movies and add them to the library, leaving existing movies alone\nImport and Replace - import movies and replace the library with the imported set, deleting all the existing movies\nExport - export your entire library", "Movie Manager - Import/Export - Step 1/3",
@@ -524,7 +527,7 @@ while True:
                 break
             else:
                 movie = Movie(movie[0])
-                if (eg.buttonbox(f"Your random movie is...\n\n{movie.string()}",
+                if (eg.buttonbox(f"Your random movie is...\n\n{movie.string(False)}",
                                  "Movie Manager - Random Movie",
                                  ["Back to Menu", "Pick Again"]) == "Back to Menu"):
                     break
