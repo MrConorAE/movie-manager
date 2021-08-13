@@ -369,8 +369,18 @@ while True:
                 continue
     elif mainMenuChoice == 'view':
         # View the movies in the database.
-        # Get a complete list of all the movies in the database.
-        rawMovies = c.execute("SELECT * FROM movies").fetchall()
+        # Ask the user how they would like the results sorted:
+        sortoptions = {"Title (default)": "name", "Release Year": "year",
+                       "Rating": "rating", "Runtime": "runtime", "Genre": "genre", "Cancel": None}
+        sortby = sortoptions[eg.buttonbox("How would you like to sort the results?",
+                                          "Movie Manager - View Library",
+                                          list(sortoptions.keys()))]
+        # If the user presses Cancel, exit:
+        if (sortby == None):
+            continue
+        # Get the list of movies in the database, sorted by the user's preference:
+        rawMovies = c.execute(
+            f"SELECT * FROM movies ORDER BY {sortby}").fetchall()
         # Convert the fetched data (list of tuples) to a list of Movie objects for easier handling.
         movies = []
         for movie in rawMovies:
