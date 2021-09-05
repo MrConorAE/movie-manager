@@ -426,7 +426,7 @@ while True:
                         if mode == "Import and Replace":
                             c.execute("DELETE FROM movies")
                         c.executemany(
-                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
+                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie.export() for movie in loadedMovies])
                         db.commit()
                         # Notify the user:
                         eg.msgbox("Movies imported successfully!",
@@ -451,7 +451,7 @@ while True:
                         # If they agree, import the movies.
                         c.execute("DELETE FROM movies")
                         c.executemany(
-                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie[1:] for movie in loadedMovies])
+                            "INSERT INTO movies VALUES (null, ?, ?, ?, ?, ?)", [movie.export() for movie in loadedMovies])
                         db.commit()
                         # Notify the user:
                         eg.msgbox("Movies imported successfully!",
